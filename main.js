@@ -58,9 +58,9 @@ class Handler {
             const check = this.cooldowns.get(`${message.author.id}_${message.guild.id}_${cmd.toLowerCase()}`);
             if(check && file.help.cooldown - (Date.now() - check) > 0) {
                 const obj = ms(file.help.cooldown - (Date.now() - check));
-                return message.reply("You must wait another " + obj.days > 0 ? `${obj.days}d ` : '' + obj.hours > 0 ? `${obj.hours}h ` : '' + obj.minutes > 0 ? `${obj.minutes}m ` : '' + obj.seconds > 0 ? `${obj.seconds}s ` : '' + ' before using this command again.');   
+                return message.channel.send(`You must wait another ${obj.days > 0 ? `${obj.days}d ` : ''}${obj.hours > 0 ? `${obj.hours}h ` : ''}${obj.minutes > 0 ? `${obj.minutes}m ` : ''}${obj.seconds > 0 ? `${obj.seconds}s ` : ''}${obj.milliseconds > 0 ? `${obj.milliseconds}ms` : ''} before using this command again. `);   
             }
-            this.cooldowns.set(`${message.author.id}_${message.guild.id}_${cmd.toLowerCase()}`);
+            this.cooldowns.set(`${message.author.id}_${message.guild.id}_${cmd.toLowerCase()}`, Date.now());
         }
 
         try {
