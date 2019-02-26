@@ -1,3 +1,1 @@
-module.exports = {
-    Handler: require("./main")
-}
+module.exports = require("./main")
