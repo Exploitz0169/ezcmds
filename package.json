@@ -1,0 +1,15 @@
+{
+  "name": "ezcmdsrewrite",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "parse-ms": "^2.0.0",
+    "walk": "^2.3.14"
+  }
+}
