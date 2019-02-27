@@ -55,6 +55,7 @@ class Handler {
         const file = this.commands.get(cmd.toLowerCase()) || this.aliases.get(cmd.toLowerCase());
         if(!file) return null;
 
+
         if(file.help.guildOnly && !message.guild) return message.channel.send('This command does not work inside DM channels.');
 
         if(this.owner) {
@@ -64,8 +65,11 @@ class Handler {
         }
 
         if(message.guild){
+        
+        const member = message.member || await message.guild.members.fetch(message.author.id);
+
         if(file.help.botPerms && !file.help.botPerms.every(u => message.guild.me.hasPermission(u))) return message.channel.send(`I need the following permissions to execute this command: ${file.help.botPerms.join(', ')}`);
-        if(file.help.userPerms && !file.help.userPerms.every(u => message.member.hasPermission(u))) return message.channel.send(`You need the following permissions to run this command: ${file.help.userPerms.join(', ')}`);
+        if(file.help.userPerms && !file.help.userPerms.every(u => member.hasPermission(u))) return message.channel.send(`You need the following permissions to run this command: ${file.help.userPerms.join(', ')}`);
         
 
         if(file.help.cooldown) {
