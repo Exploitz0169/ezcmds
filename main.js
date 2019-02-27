@@ -49,10 +49,24 @@ class Handler {
 
     async run (cmd, client, message, args, ...extras) {
 
+        if(message.author.bot) return;
         if(!this.commands) return null;
 
         const file = this.commands.get(cmd.toLowerCase()) || this.aliases.get(cmd.toLowerCase());
         if(!file) return null;
+
+        if(file.help.guildOnly && !message.guild) return message.channel.send('This command does not work inside DM channels.');
+
+        if(this.owner) {
+            if(file.help.ownerOnly && message.author.id !== this.owner) {
+                return message.reply('You do not have access to this command.');
+            }
+        }
+
+        if(message.guild){
+        if(file.help.botPerms && !file.help.botPerms.every(u => message.guild.me.hasPermission(u))) return message.channel.send(`I need the following permissions to execute this command: ${file.help.botPerms.join(', ')}`);
+        if(file.help.userPerms && !file.help.userPerms.every(u => message.member.hasPermission(u))) return message.channel.send(`You need the following permissions to run this command: ${file.help.userPerms.join(', ')}`);
+        
 
         if(file.help.cooldown) {
             const check = this.cooldowns.get(`${message.author.id}_${message.guild.id}_${cmd.toLowerCase()}`);
@@ -62,17 +76,7 @@ class Handler {
             }
             this.cooldowns.set(`${message.author.id}_${message.guild.id}_${cmd.toLowerCase()}`, Date.now());
         }
-
-        if(this.owner) {
-            if(file.ownerOnly && message.author.id !== this.owner) {
-                return message.reply('You do not have access to this command.');
-            }
         }
-
-        if(file.botPerms && !file.botPerms.some(u => message.guild.me.hasPermission(u))) return message.channel.send(`I need the following permissions to execute this command: ${file.botPerms.join('`, `')}`);
-        if(file.userPerms && !file.userPerms.some(u => message.member.hasPermission(u))) return message.channel.send(`You need the following permissions to run this command: ${file.userPerms.join('`, `')}`);
-
-        if(file.guildOnly && !message.guild) return message.channel.send('This command does not work inside DM channels.');
 
         try {
             await file.run(client, message, args, ...extras);
