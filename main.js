@@ -63,6 +63,17 @@ class Handler {
             this.cooldowns.set(`${message.author.id}_${message.guild.id}_${cmd.toLowerCase()}`, Date.now());
         }
 
+        if(this.owner) {
+            if(file.ownerOnly && message.author.id !== this.owner) {
+                return message.reply('You do not have access to this command.');
+            }
+        }
+
+        if(file.botPerms && !file.botPerms.some(u => message.guild.me.hasPermission(u))) return message.channel.send(`I need the following permissions to execute this command: ${file.botPerms.join('`, `')}`);
+        if(file.userPerms && !file.userPerms.some(u => message.member.hasPermission(u))) return message.channel.send(`You need the following permissions to run this command: ${file.userPerms.join('`, `')}`);
+
+        if(file.guildOnly && !message.guild) return message.channel.send('This command does not work inside DM channels.');
+
         try {
             await file.run(client, message, args, ...extras);
         }catch(e) {
@@ -72,12 +83,7 @@ class Handler {
 
     }
     
-    reload (cmd) {
-
-        return this.commands.get(cmd.toLowerCase()) ? this.commands.get(cmd.toLowerCase()).help.path : null;
-
-
-    }
+    
     
 
 
